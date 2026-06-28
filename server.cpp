@@ -51,7 +51,7 @@ int main()
     ev.data.fd=clientSocketFd;
     epoll_ctl(epfd, EPOLL_CTL_ADD, clientSocketFd, &ev);
     char client_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &client_addr, client_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
     cout<<"Connection established with "<< client_ip<<":"<< ntohs(client_addr.sin_port)<<endl;
     epoll_event events[2];
     bool canLoop=true;
