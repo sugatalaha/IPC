@@ -22,7 +22,12 @@ int main()
     server_addr.sin_port=htons(PORT);
     server_addr.sin_addr.s_addr=INADDR_ANY;
     server_addr.sin_family=AF_INET;
-    bind(fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    int bindReturn=bind(fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    if(bindReturn<0)
+    {
+        perror("Could not bind:");
+        exit(1);
+    }
     int ret=listen(fd, 5);
     if(ret==-1)
     {
@@ -58,7 +63,7 @@ int main()
             int fd=events[i].data.fd;
             if(fd==STDIN_FILENO)
             {
-                char msg[1024];
+                char msg[1024]={0};
                 cin>>msg;
                 send(clientSocketFd, (char *)msg, sizeof(msg), 0);
             }
