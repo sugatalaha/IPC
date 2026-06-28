@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
         cout<<"Provide IP address of server to connect.";
         return 0;
     }
+    
     char *ip_addr=argv[1];
     int clientSocketFd=socket(AF_INET, SOCK_STREAM, 0);
     if(clientSocketFd<0)

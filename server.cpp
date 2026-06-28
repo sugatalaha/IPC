@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include<string.h>
 #include <sys/epoll.h>
+#include<csignal>
+#include "logging.hpp"
 
 #define PORT 8080
 
@@ -18,6 +20,7 @@ int main()
         perror("Failed to open socket!");
         exit(1);
     }
+    signal(SIGINT, signal_handler);
     sockaddr_in server_addr{};
     server_addr.sin_port=htons(PORT);
     server_addr.sin_addr.s_addr=INADDR_ANY;
@@ -53,6 +56,7 @@ int main()
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
     cout<<"Connection established with "<< client_ip<<":"<< ntohs(client_addr.sin_port)<<endl;
+    logEvent("Connected to client "+(string)client_ip+":"+to_string(ntohs(client_addr.sin_port)));
     epoll_event events[2];
     bool canLoop=true;
     while(canLoop)
@@ -66,6 +70,7 @@ int main()
                 char msg[1024]={0};
                 cin>>msg;
                 send(clientSocketFd, (char *)msg, sizeof(msg), 0);
+                logEvent("Server sent:"+(string)msg);
             }
             else if(fd==clientSocketFd)
             {
@@ -74,10 +79,12 @@ int main()
                 if(strlen(buffer)==0)
                 {
                     cout<<"Connection closing"<<endl;
+                    logEvent("Connection with client "+(string)client_ip+" terminates");
                     canLoop=false;
                     break;
                 }
-                cout<<"Message received: "<<buffer<<endl;
+                cout<<"Message received from client: "<<buffer<<endl;
+                logEvent("Message received from client "+(string)client_ip+":"+(string)buffer);
             }
         }
     }
