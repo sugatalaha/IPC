@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
             else if(fd==STDIN_FILENO)
             {
                 char msg[1024]={0};
-                cin>>msg;
+                cin.getline(msg, 1024);
                 send(clientSocketFd, (char *)msg, sizeof(msg), 0);
             }
         }
